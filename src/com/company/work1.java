@@ -11,6 +11,7 @@ public class work1 {
         int all = 0;
         int max = 0;
         int index =-1;
+
         for (int cell: input) {
             index++;
             if (cell >= 0) {
@@ -28,11 +29,11 @@ public class work1 {
                 }
             }
         }
-        if (input.isEmpty())
+        if (input.isEmpty())//  assertEquals(List.of(), work1.searchMass(List.of()));
             return List.of();
-        else if (input.get(beginMain) < 0 && end >= beginMain) beginMain++;
-        if (end == -1) end = 0;
-        else end++;
-        return input.subList(beginMain, end);
+        else if (input.get(beginMain) < 0 // assertEquals(List.of(1, 2, 3, 4, 5), work1.searchMass(List.of(1, 2, 3, 4, 5)));
+                && end >= beginMain) // assertEquals(List.of(), work1.searchMass(List.of(-10, -10, -10, -10)));
+            beginMain++;
+        return input.subList(beginMain, end+1);
     }
 }
