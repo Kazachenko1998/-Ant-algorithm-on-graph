@@ -20,7 +20,6 @@ public class BinaryTreeTest {
         tree.add(20);
         SortedSet<Integer> sortedSet = new TreeSet<>();
         assertEquals(sortedSet, tree.subSet(0, 0));
-        sortedSet.add(20);
         assertEquals(sortedSet, tree.subSet(20, 20));
         sortedSet.add(15);
         sortedSet.add(10);
@@ -38,6 +37,7 @@ public class BinaryTreeTest {
         sortedSet.remove(20);
         assertEquals(sortedSet, tree.subSet(1, 19));
         assertEquals(sortedSet, tree.subSet(0, 19));
+        sortedSet.remove(15);
         assertEquals(sortedSet, tree.subSet(1, 15));
     }
 

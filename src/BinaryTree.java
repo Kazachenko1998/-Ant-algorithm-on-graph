@@ -1,6 +1,7 @@
 
 
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,21 +22,6 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
             this.value = value;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Node)) return false;
-            Node<?> node = (Node<?>) o;
-            return Objects.equals(value, node.value) &&
-                    Objects.equals(left, node.left) &&
-                    Objects.equals(right, node.right);
-        }
-
-        @Override
-        public int hashCode() {
-
-            return Objects.hash(value, left, right);
-        }
     }
 
     private Node<T> root = null;
@@ -232,14 +218,15 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     @NotNull
     @Override
     public SortedSet<T> subSet(T fromElement, T toElement) {
-        return subSet(root, fromElement, toElement, new TreeSet<>());
+        return new TreeSet<>(subSet(root, fromElement, toElement, new TreeSet<>())).
+                subSet(fromElement, true, toElement,false);
     }
 
     public SortedSet<T> subSet(Node<T> root, T fromElement, T toElement, SortedSet<T> sortedSet) {
         if (root == null) return sortedSet;
         int moreStart = root.value.compareTo(fromElement);
         int lessFinish = toElement.compareTo(root.value);
-        if (moreStart >= 0 && lessFinish >= 0) {
+        if (moreStart >= 0 && lessFinish > 0) {
             sortedSet.add(root.value);
             subSet(root.left, fromElement, toElement, sortedSet);
             subSet(root.right, fromElement, toElement, sortedSet);
@@ -283,28 +270,13 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         return current.value;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BinaryTree)) return false;
-        if (!super.equals(o)) return false;
-        BinaryTree<?> that = (BinaryTree<?>) o;
-        return size == that.size &&
-                Objects.equals(root, that.root);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(super.hashCode(), root, size);
-    }
 
     @Override
     public String toString() {
-        ArrayList<ArrayList<Object>> str = toStr(root, 0, new ArrayList<>());
+        List<List<Object>> str = toStr(root, 0, new ArrayList<>());
         StringBuilder result = new StringBuilder();
         int i = 6;
-        for (ArrayList<Object> aList : str) {
+        for (List<Object> aList : str) {
             i--;
             result.append(spaceAdd((int) Math.pow(2.0, (double) i - 1)));
             for (Object bList : aList) {
@@ -315,6 +287,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         return result.toString();
     }
 
+    @NotNull
     private String spaceAdd(int i) {
         StringBuilder result = new StringBuilder();
         for (; i > 0; i--)
@@ -322,7 +295,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         return result.toString();
     }
 
-    private void addNull(int depth, ArrayList<ArrayList<Object>> list) {
+    private void addNull(int depth, List<List<Object>> list) {
         if (depth >= 7) return;
         if (list.size() <= depth) list.add(new ArrayList<>());
         list.get(depth).add(" ");
@@ -330,7 +303,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         addNull(depth + 1, list);
     }
 
-    public ArrayList<ArrayList<Object>> toStr(Node<T> root, int depth, ArrayList<ArrayList<Object>> list) {
+    public List<List<Object>> toStr(Node<T> root, int depth, List<List<Object>> list) {
         if (depth >= 11) return list;
         if (list.size() <= depth) list.add(new ArrayList<>());
         if (root == null) {
