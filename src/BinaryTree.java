@@ -217,16 +217,16 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
 
     @NotNull
     @Override
-    public SortedSet<T> subSet(T fromElement, T toElement) {
-        return new TreeSet<>(subSet(root, fromElement, toElement, new TreeSet<>())).
-                subSet(fromElement, true, toElement,false);
+    public SortedSet<T> subSet(T fromElement, T toElement) throws IllegalArgumentException {
+        return new TreeSet<>(subSet(root, first(), last(), new TreeSet<>())).
+                subSet(fromElement,  toElement);
     }
 
     public SortedSet<T> subSet(Node<T> root, T fromElement, T toElement, SortedSet<T> sortedSet) {
         if (root == null) return sortedSet;
         int moreStart = root.value.compareTo(fromElement);
         int lessFinish = toElement.compareTo(root.value);
-        if (moreStart >= 0 && lessFinish > 0) {
+        if (moreStart >= 0 && lessFinish >= 0) {
             sortedSet.add(root.value);
             subSet(root.left, fromElement, toElement, sortedSet);
             subSet(root.right, fromElement, toElement, sortedSet);

@@ -1,9 +1,12 @@
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BinaryTreeTest {
     @Test
@@ -39,6 +42,45 @@ public class BinaryTreeTest {
         assertEquals(sortedSet, tree.subSet(0, 19));
         sortedSet.remove(15);
         assertEquals(sortedSet, tree.subSet(1, 15));
+    }
+    @Test
+    void throwIllegal() throws IllegalArgumentException {
+        BinaryTree<Integer> tree = new BinaryTree<>();
+        tree.add(10);
+        tree.add(5);
+        tree.add(7);
+        tree.add(3);
+        tree.add(1);
+        tree.add(4);
+        tree.add(8);
+        tree.add(15);
+        tree.add(20);
+        SortedSet<Integer> sortedSet = tree.subSet(tree.first(),10);
+        assertEquals(false, sortedSet.add(8));
+        assertThrows(IllegalArgumentException.class,()-> sortedSet.add(99));
+        assertEquals(true, sortedSet.add(9));
+        System.out.println(sortedSet);
+        System.out.println(tree);
+    }
+
+    @Test
+    void throwIll() throws IllegalArgumentException {
+        NavigableSet<Integer> tree = new TreeSet<>();
+        tree.add(10);
+        tree.add(5);
+        tree.add(7);
+        tree.add(3);
+        tree.add(1);
+        tree.add(4);
+        tree.add(8);
+        tree.add(15);
+        tree.add(20);
+        SortedSet<Integer> sortedSet = tree.subSet(tree.first(),10);
+        assertEquals(false, sortedSet.add(8));
+        assertThrows(IllegalArgumentException.class,()-> sortedSet.add(99));
+        assertEquals(true, sortedSet.add(9));
+        System.out.println(sortedSet);
+        System.out.println(tree);
     }
 
     @Test
