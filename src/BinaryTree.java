@@ -1,7 +1,6 @@
 
 
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +26,82 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     private Node<T> root = null;
 
     private int size = 0;
+
+    class SubTreeSet extends AbstractSet<T> implements SortedSet<T> {
+        private TreeSet<T> delegate;
+        private T fromElement, toElement;
+
+        public SubTreeSet(SortedSet<T> delegate, T fromElement, T toElement) {
+            this.delegate = new TreeSet<>(delegate);
+            this.fromElement = fromElement;
+            this.toElement = toElement;
+        }
+
+        @Override
+        public boolean add(T t) {
+            if (!BinaryTree.this.contains(t)) throw new IllegalArgumentException("key not in Tree");
+            if (t.compareTo(toElement) < 0 || t.compareTo(fromElement) >= 0)
+                throw new IllegalArgumentException("key out in radix");
+            return delegate.add(t);
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            return delegate.remove(o) && BinaryTree.this.remove(o);
+        }
+
+        @NotNull
+        @Override
+        public Iterator<T> iterator() {
+            return delegate.iterator();
+        }
+
+        @Override
+        public int size() {
+            return delegate.size();
+        }
+
+        @Override
+        public String toString() {
+            return delegate.toString();
+        }
+
+        @Nullable
+        @Override
+        public Comparator<? super T> comparator() {
+            return delegate.comparator();
+        }
+
+        @NotNull
+        @Override
+        public SortedSet<T> subSet(T fromElement, T toElement) {
+            throw new UnsupportedOperationException();
+        }
+
+        @NotNull
+        @Override
+        public SortedSet<T> headSet(T toElement) {
+            throw new UnsupportedOperationException();
+        }
+
+        @NotNull
+        @Override
+        public SortedSet<T> tailSet(T fromElement) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public T first() {
+            if (!delegate.isEmpty()) return delegate.first();
+            else return null;
+        }
+
+        @Override
+        public T last() {
+            return delegate.last();
+        }
+
+    }
 
     @Override
     public boolean add(T t) {
@@ -195,6 +270,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         public void remove() {
             throw new UnsupportedOperationException();
         }
+
     }
 
     @NotNull
@@ -218,21 +294,20 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     @NotNull
     @Override
     public SortedSet<T> subSet(T fromElement, T toElement) throws IllegalArgumentException {
-        return new TreeSet<>(subSet(root, first(), last(), new TreeSet<>())).
-                subSet(fromElement,  toElement);
+        return new SubTreeSet(subSet(root, fromElement, toElement, new TreeSet<>()), fromElement, toElement);
     }
 
     public SortedSet<T> subSet(Node<T> root, T fromElement, T toElement, SortedSet<T> sortedSet) {
         if (root == null) return sortedSet;
         int moreStart = root.value.compareTo(fromElement);
         int lessFinish = toElement.compareTo(root.value);
-        if (moreStart >= 0 && lessFinish >= 0) {
+        if (moreStart >= 0 && lessFinish > 0) {
             sortedSet.add(root.value);
             subSet(root.left, fromElement, toElement, sortedSet);
             subSet(root.right, fromElement, toElement, sortedSet);
         } else if (moreStart > 0) {
             subSet(root.left, fromElement, toElement, sortedSet);
-        } else {
+        } else if (lessFinish > 0) {
             subSet(root.right, fromElement, toElement, sortedSet);
         }
         return sortedSet;
@@ -275,7 +350,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     public String toString() {
         List<List<Object>> str = toStr(root, 0, new ArrayList<>());
         StringBuilder result = new StringBuilder();
-        int i = 6;
+        int i = 5;
         for (List<Object> aList : str) {
             i--;
             result.append(spaceAdd((int) Math.pow(2.0, (double) i - 1)));
@@ -304,7 +379,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     }
 
     public List<List<Object>> toStr(Node<T> root, int depth, List<List<Object>> list) {
-        if (depth >= 11) return list;
+        if (depth >= 5) return list;
         if (list.size() <= depth) list.add(new ArrayList<>());
         if (root == null) {
             list.get(depth).add(" ");
