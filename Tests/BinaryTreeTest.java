@@ -41,6 +41,7 @@ public class BinaryTreeTest {
         sortedSet.remove(15);
         assertEquals(sortedSet, tree.subSet(1, 15));
     }
+
     @Test
     void throwIllegal() throws IllegalArgumentException {
         BinaryTree<Integer> tree = new BinaryTree<>();
@@ -53,17 +54,17 @@ public class BinaryTreeTest {
         tree.add(8);
         tree.add(15);
         tree.add(20);
-        SortedSet<Integer> sortedSet = tree.subSet(1,10);
-        assertThrows(IllegalArgumentException.class,()-> sortedSet.add(15));
-        assertThrows(IllegalArgumentException.class,()-> sortedSet.add(99));
-        assertThrows(IllegalArgumentException.class,()-> sortedSet.add(9));
-        assertThrows(IllegalArgumentException.class,()-> sortedSet.add(10));
+        System.out.println(tree);
+        SortedSet<Integer> sortedSet = tree.subSet(1, 10);
+        assertThrows(IllegalArgumentException.class, () -> sortedSet.add(15));
+        assertThrows(IllegalArgumentException.class, () -> sortedSet.add(99));
+        assertThrows(IllegalArgumentException.class, () -> sortedSet.add(9));
+        assertThrows(IllegalArgumentException.class, () -> sortedSet.add(10));
         sortedSet.remove(4);
         assertEquals(false, tree.contains(4));
         System.out.println(sortedSet);
         System.out.println(tree);
     }
-
 
 
     @Test
